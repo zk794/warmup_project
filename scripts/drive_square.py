@@ -13,32 +13,32 @@ class DriveSquare(object):
         # setup publisher to the cmd_vel ROS topic
         self.robot_movement_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
 
-     def __run__(self):
+    def __run__(self):
 
-         # set twist object for going forward
-         go_straight = Twist(
-             linear=Vector3(0.3, 0, 0),
-             angular=Vector3(0, 0, 0)
-         )
+        # set twist object for going forward
+        go_straight = Twist(
+            linear=Vector3(0.3, 0, 0),
+            angular=Vector3(0, 0, 0)
+        )
 
-         # set twist object for turning
-         turn = Twist(
-            linear=Vector3(0, 0, 0),
-            angular=Vector3(0, 0, 0.78)
-         )
+        # set twist object for turning
+        turn = Twist(
+           linear=Vector3(0, 0, 0),
+           angular=Vector3(0, 0, 0.78)
+        )
 
-         # allow the publisher enough time to set up before publishing the first msg
-         rospy.sleep(1)
+        # allow the publisher enough time to set up before publishing the first msg
+        rospy.sleep(1)
 
-         for i in range(12):
-             # straight for 2 seconds
-             self.robot_movement_pub.publish(go_straight)
-             rospy.sleep(2)
-             # turn for 2 seconds
-             self.robot_movement_pub.publish(turn)
-             rospy.sleep(2)
+        for i in range(12):
+            # straight for 2 seconds
+            self.robot_movement_pub.publish(go_straight)
+            rospy.sleep(2)
+            # turn for 2 seconds
+            self.robot_movement_pub.publish(turn)
+            rospy.sleep(2)
 
- if __name__ == '__main__':
-     # instantiate the ROS node and run it
-     node = DriveSquare()
-     node.run()
+if __name__ == '__main__':
+    # instantiate the ROS node and run it
+    node = DriveSquare()
+    node.run()
