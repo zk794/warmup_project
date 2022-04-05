@@ -24,7 +24,7 @@ class DriveSquare(object):
         # set twist object for turning
         turn = Twist(
            linear=Vector3(0, 0, 0),
-           angular=Vector3(0, 0, 0.78)
+           angular=Vector3(0, 0, 0.8)
         )
 
         # allow the publisher enough time to set up before publishing the first msg
