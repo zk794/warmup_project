@@ -38,6 +38,13 @@ class DriveSquare(object):
             self.robot_movement_pub.publish(turn)
             rospy.sleep(2)
 
+        stop = Twist(
+           linear=Vector3(0, 0, 0),
+           angular=Vector3(0, 0, 0)
+        )
+
+        self.robot_movement_pub.publish(stop)
+
 if __name__ == '__main__':
     # instantiate the ROS node and run it
     node = DriveSquare()
