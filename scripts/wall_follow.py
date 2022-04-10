@@ -49,19 +49,19 @@ class FollowWall():
         if closestDist > followDist:
             self.twist.angular.z = 0
             self.twist.linear.x = 0.2
-        elif closestDist == followDist:
-            if data.ranges[90] == followDist:
-                if data.ranges[45] > (followDist / 0.70710678118): # followDist/cos(45)
-                    # start turning left
-                    self.twist.angular.z = 0.1
-                    self.twist.linear.x = 0.2
-
-            if data.ranges[0] < followDist: # turn right if wall right ahead
-                self.twist.angular.z = 0.8
+        elif closestDist > followDist-error:
+            if closestInd == 90:
+                self.twist.angular.z = 0
                 self.twist.linear.x = 0
-                self.twist_pub.publish(self.twist)
-                rospy.sleep(2)
-                return
+            elif closestInd < 90:
+                self.twist.angular.z = ((90-closestInd) * 0.1) / 90
+                self.twist.linear.x = -0.01
+            elif closestInd < 270:
+                self.twist.angular.z = ((closestInd-90) * -0.1) / 90
+                self.twist.linear.x = -0.01
+            else:
+                self.twist.angular.z = ((360-closestInd) * 0.1) / 90 + 0.05
+                self.twist.linear.x = -0.01
 
         # Publish msg to cmd_vel.
         self.twist_pub.publish(self.twist)
