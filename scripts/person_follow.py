@@ -47,27 +47,27 @@ class FollowPerson():
 
         # set velocity (turn towards closest object and go towards/away from it)
         if (closestInd > 0 ) and (closestInd < 180):
-            self.twist.angular.z = 0.1
+            self.twist.angular.z = closestInd * 0.1
             if closestDist > followDist:
-                self.twist.linear.x = 0.1
+                self.twist.linear.x = closestDist * 0.1
             elif closestDist < followDist:
-                self.twist.linear.x = -0.1
+                self.twist.linear.x = closestDist * -0.1
             else:
                 self.twist.linear.x = 0
         elif (closestInd > 0 ):
-            self.twist.angular.z = -0.1
+            self.twist.angular.z = (360 - closestInd) * -0.1
             if closestDist > followDist:
-                self.twist.linear.x = 0.1
+                self.twist.linear.x = closestDist * 0.1
             elif closestDist < followDist:
-                self.twist.linear.x = -0.1
+                self.twist.linear.x = closestDist * -0.1
             else:
                 self.twist.linear.x = 0
         else:
             self.twist.angular.z = 0
             if closestDist > followDist:
-                self.twist.linear.x = 0.1
+                self.twist.linear.x = closestDist * 0.1
             elif closestDist < followDist:
-                self.twist.linear.x = -0.1
+                self.twist.linear.x = closestDist * -0.1
             else:
                 self.twist.linear.x = 0
 
@@ -77,7 +77,7 @@ class FollowPerson():
     def run(self):
         # Keep the program alive.
         rospy.spin()
-        
+
 if __name__ == '__main__':
     # Declare a node and run it.
     node = FollowPerson()
