@@ -9,14 +9,16 @@ from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Vector3
 
-# minimum distance from person
-followDist = 0.3
+# minimum distance from wall
+followDist = 0.4
 
-class FollowPerson():
+error = 0.05
+
+class FollowWall():
 
     def __init__(self):
         # Start rospy node.
-        rospy.init_node("follow_person")
+        rospy.init_node("follow_wall")
 
         # Declare our node as a subscriber to the scan topic and
         #   set self.process_scan as the function to be used for callback.
@@ -41,37 +43,29 @@ class FollowPerson():
 
         # find closest object's angle and distance
         closestInd = 0
-        closestDist = 10
+        closestDist = 100
         for i in len(data.ranges):
             if (data.ranges[i] > 0) and (data.ranges[i] < closestDist):
                 closestInd = i
                 closestDist = data.ranges[i]
 
-        # set velocity (turn towards closest object and go towards/away from it)
-        if (closestInd > 0 ) and (closestInd < 180):
-            self.twist.angular.z = closestInd * 0.1
-            if closestDist > followDist:
-                self.twist.linear.x = closestDist * 0.1
-            elif closestDist < followDist:
-                self.twist.linear.x = closestDist * -0.1
-            else:
-                self.twist.linear.x = 0
-        elif (closestInd > 0 ):
-            self.twist.angular.z = (360 - closestInd) * -0.1
-            if closestDist > followDist:
-                self.twist.linear.x = closestDist * 0.1
-            elif closestDist < followDist:
-                self.twist.linear.x = closestDist * -0.1
-            else:
-                self.twist.linear.x = 0
-        else:
+        # go forward to find a wall if nothing close
+        if closestDist > followDist:
             self.twist.angular.z = 0
-            if closestDist > followDist:
-                self.twist.linear.x = closestDist * 0.1
-            elif closestDist < followDist:
-                self.twist.linear.x = closestDist * -0.1
-            else:
+            self.twist.linear.x = 0.2
+        elif closestDist == followDist:
+            if data.ranges[90] == followDist:
+                if data.ranges[45] > (followDist / 0.70710678118): # followDist/cos(45)
+                    # start turning left
+                    self.twist.angular.z = 0.1
+                    self.twist.linear.x = 0.2
+
+            if data.ranges[0] < followDist: # turn right if wall right ahead
+                self.twist.angular.z = 0.8
                 self.twist.linear.x = 0
+                self.twist_pub.publish(self.twist)
+                rospy.sleep(2)
+                return
 
         # Publish msg to cmd_vel.
         self.twist_pub.publish(self.twist)
@@ -82,5 +76,5 @@ class FollowPerson():
 
 if __name__ == '__main__':
     # Declare a node and run it.
-    node = FollowPerson()
+    node = FollowWall()
     node.run()
