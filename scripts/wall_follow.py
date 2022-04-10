@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
 import rospy
-​
+
 # msg needed for /scan.
 from sensor_msgs.msg import LaserScan
-​
+
 # msgs needed for /cmd_vel.
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Vector3
@@ -37,14 +37,10 @@ class FollowWall():
         #   the robot, set linear velocity based on that information, and
         #   publish to cmd_vel.
 
-        # The ranges field is a list of 360 number where each number
-        #   corresponds to the distance to the closest obstacle from the
-        #   LiDAR at various angles. Each measurement is 1 degree apart.
-
         # find closest object's angle and distance
         closestInd = 0
         closestDist = 100
-        for i in len(data.ranges):
+        for i in range(len(data.ranges)):
             if (data.ranges[i] > 0) and (data.ranges[i] < closestDist):
                 closestInd = i
                 closestDist = data.ranges[i]

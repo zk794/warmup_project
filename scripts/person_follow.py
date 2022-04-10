@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
 import rospy
-​
+
 # msg needed for /scan.
 from sensor_msgs.msg import LaserScan
-​
+
 # msgs needed for /cmd_vel.
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Vector3
@@ -35,41 +35,37 @@ class FollowPerson():
         #   the robot, set linear velocity based on that information, and
         #   publish to cmd_vel.
 
-        # The ranges field is a list of 360 number where each number
-        #   corresponds to the distance to the closest obstacle from the
-        #   LiDAR at various angles. Each measurement is 1 degree apart.
-
         # find closest object's angle and distance
         closestInd = 0
         closestDist = 10
-        for i in len(data.ranges):
+        for i in range(len(data.ranges)):
             if (data.ranges[i] > 0) and (data.ranges[i] < closestDist):
                 closestInd = i
                 closestDist = data.ranges[i]
 
         # set velocity (turn towards closest object and go towards/away from it)
         if (closestInd > 0 ) and (closestInd < 180):
-            self.twist.angular.z = closestInd * 0.1
+            self.twist.angular.z = (closestInd * 0.1) / 180
             if closestDist > followDist:
-                self.twist.linear.x = closestDist * 0.1
+                self.twist.linear.x = (closestDist * 0.1) / 180
             elif closestDist < followDist:
-                self.twist.linear.x = closestDist * -0.1
+                self.twist.linear.x = (closestDist * -0.1) / 180
             else:
                 self.twist.linear.x = 0
         elif (closestInd > 0 ):
-            self.twist.angular.z = (360 - closestInd) * -0.1
+            self.twist.angular.z = ((360 - closestInd) * -0.1) / 180
             if closestDist > followDist:
-                self.twist.linear.x = closestDist * 0.1
+                self.twist.linear.x = (closestDist * 0.1) / 180
             elif closestDist < followDist:
-                self.twist.linear.x = closestDist * -0.1
+                self.twist.linear.x = (closestDist * -0.1) / 180
             else:
                 self.twist.linear.x = 0
         else:
             self.twist.angular.z = 0
             if closestDist > followDist:
-                self.twist.linear.x = closestDist * 0.1
+                self.twist.linear.x = (closestDist * 0.1) / 180
             elif closestDist < followDist:
-                self.twist.linear.x = closestDist * -0.1
+                self.twist.linear.x = (closestDist * -0.1) / 180
             else:
                 self.twist.linear.x = 0
 
