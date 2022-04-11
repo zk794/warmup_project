@@ -49,20 +49,24 @@ class FollowWall():
         if closestDist > followDist:
             self.twist.angular.z = 0
             self.twist.linear.x = 0.2
+        # if closest object is at approximately the following distance
+        # pos angular turns left
         elif closestDist > followDist-error:
             if closestInd == 90:
                 self.twist.angular.z = 0
-                self.twist.linear.x = 0
+                self.twist.linear.x = 0.1
             elif closestInd < 90:
-                self.twist.angular.z = ((90-closestInd) * 0.1) / 90
-                self.twist.linear.x = -0.01
+                self.twist.angular.z = ((90-closestInd) * -0.1) / 90
+                self.twist.linear.x = 0.01
             elif closestInd < 270:
-                self.twist.angular.z = ((closestInd-90) * -0.1) / 90
-                self.twist.linear.x = -0.01
+                self.twist.angular.z = ((closestInd-90) * 0.1) / 90
+                self.twist.linear.x = 0.01
             else:
-                self.twist.angular.z = ((360-closestInd) * 0.1) / 90 + 0.05
-                self.twist.linear.x = -0.01
-
+                self.twist.angular.z = ((360-closestInd) * -0.1) / 90 + 0.05
+                self.twist.linear.x = 0.01
+        else: # if too close
+            self.twist.angular.z = 0
+            self.twist.linear = 0 # just stop, don't want to worry about this yet
         # Publish msg to cmd_vel.
         self.twist_pub.publish(self.twist)
 
